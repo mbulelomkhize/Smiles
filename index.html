@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Sorting Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Sidebar Controls -->
+        <div class="sidebar">
+            <h1 class="game-title">ALGORITHM<br><span>SORTING</span></h1>
+            
+            <div class="control-group">
+                <h3>CHOOSE ALGORITHM</h3>
+                <div class="btn-grid">
+                    <button id="algo-bubble" class="active" onclick="setAlgorithm('bubble')">Bubble Sort</button>
+                    <button id="algo-selection" onclick="setAlgorithm('selection')">Selection Sort</button>
+                    <button id="algo-insertion" onclick="setAlgorithm('insertion')">Insertion Sort</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>GAME MODE</h3>
+                <div class="btn-grid">
+                    <button id="mode-practice" class="active" onclick="setMode('practice')">Practice</button>
+                    <button id="mode-countdown" onclick="setMode('countdown')">Countdown</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>TYPE OF LIST</h3>
+                <div class="btn-grid">
+                    <button id="type-num" class="active" onclick="setListType('numerical')">Numerical</button>
+                    <button id="type-alpha" onclick="setListType('alphabetical')">Alphabetical</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>SCENARIO</h3>
+                <div class="btn-grid">
+                    <button id="scen-avg" class="active" onclick="generateArray('random')">Average Case</button>
+                    <button id="scen-best" onclick="generateArray('sorted')">Best Case</button>
+                    <button id="scen-worst" onclick="generateArray('reversed')">Worst Case</button>
+                </div>
+            </div>
+
+            <div class="stats-panel">
+                <p>⚡ Comparisons: <span id="comparisons">0</span></p>
+                <p>🔄 Swaps: <span id="swaps">0</span></p>
+                <p>⏱️ Time: <span id="timer">00:00</span></p>
+            </div>
+
+            <button id="start-btn" onclick="startSorting()">START GAME ▶</button>
+            <button id="reset-btn" onclick="resetGame()">Reset Array 🔄</button>
+        </div>
+
+        <!-- Main Visualizer Area -->
+        <div class="visualizer-container">
+            <div class="robot-helper" id="robot-text">
+                🤖 <span>Hello! Choose your settings and let's sort!</span>
+            </div>
+            <div id="array-container"></div>
+            
+            <!-- Speed Control -->
+            <div class="speed-control">
+                <span>⚡ Game Speed: </span>
+                <input type="range" id="speed" min="50" max="1000" value="300" style="direction: rtl;">
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
