@@ -1,276 +1,384 @@
-// Game State
 let currentArray = [];
 let currentLabels = [];
+
 let algorithm = 'bubble';
-let mode = 'practice';
 let listType = 'numerical';
-let scenario = 'random';
-let ARRAY_SIZE = 10;
+let mode = 'practice';
 
 let comparisons = 0;
 let swaps = 0;
-let isSorting = false;
-let timerInterval = null;
-let secondsElapsed = 0;
-let countdownSeconds = 30;
 
-// Audio Context Setup
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
+let currentIndex = 0;
+let selectedMin = null;
+let insertionKey = null;
 
-function playSound(frequency, duration, type = 'sine') {
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    
-    oscillator.type = type;
-    oscillator.frequency.value = frequency;
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    
-    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-    
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + duration);
-}
+const ARRAY_SIZE = 10;
 
-// Generate Data
-function generateArray(scen = 'random') {
-    if (isSorting) return;
-    scenario = scen;
+function generateArray(type = 'random') {
+
     currentArray = [];
     currentLabels = [];
-    
+
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-    
-    if (scen === 'random') {
-        for (let i = 0; i < ARRAY_SIZE; i++) currentArray.push(Math.floor(Math.random() * 90) + 10);
-    } else if (scen === 'sorted') {
-        currentArray = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-    } else if (scen === 'reversed') {
-        currentArray = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10];
+
+    if (type === 'random') {
+
+        for (let i = 0; i < ARRAY_SIZE; i++) {
+            currentArray.push(
+                Math.floor(Math.random() * 90) + 10
+            );
+        }
+
+    } else if (type === 'sorted') {
+
+        currentArray =
+            [10,20,30,40,50,60,70,80,90,100];
+
+    } else if (type === 'reversed') {
+
+        currentArray =
+            [100,90,80,70,60,50,40,30,20,10];
     }
 
     if (listType === 'alphabetical') {
-        // Map numbers to random letters to preserve sorting logic
-        let sortedArray = [...currentArray].sort((a,b) => a-b);
+
+        let sorted =
+            [...currentArray].sort((a,b)=>a-b);
+
         currentArray.forEach(val => {
-            let index = sortedArray.indexOf(val);
-            currentLabels.push(letters[index] || 'Z');
+
+            let index = sorted.indexOf(val);
+
+            currentLabels.push(
+                letters[index]
+            );
+
         });
+
     }
 
-    resetStats();
+    currentIndex = 0;
+
     renderArray();
-    document.getElementById('robot-text').innerHTML = `🤖 <span>Generated a ${scen} list. Ready when you are!</span>`;
+
+    updateStats();
+
+    updateControls();
+
+    highlightBars();
 }
 
 function renderArray() {
-    const container = document.getElementById('array-container');
+
+    const container =
+        document.getElementById('array-container');
+
     container.innerHTML = '';
-    
+
     for (let i = 0; i < currentArray.length; i++) {
-        const bar = document.createElement('div');
+
+        const bar =
+            document.createElement('div');
+
         bar.classList.add('bar');
-        bar.style.height = `${currentArray[i] * 3}px`;
-        bar.innerText = listType === 'numerical' ? currentArray[i] : currentLabels[i];
+
+        bar.style.height =
+            `${currentArray[i] * 3}px`;
+
+        bar.innerText =
+            listType === 'numerical'
+            ? currentArray[i]
+            : currentLabels[i];
+
         container.appendChild(bar);
     }
 }
 
-// Algorithms
-async function bubbleSort() {
-    let bars = document.getElementsByClassName('bar');
-    for (let i = 0; i < currentArray.length; i++) {
-        for (let j = 0; j < currentArray.length - i - 1; j++) {
-            if (!isSorting) return;
-            comparisons++; updateStats();
-            bars[j].style.background = '#00d2ff';
-            bars[j+1].style.background = '#00d2ff';
-            playSound(300 + currentArray[j]*5, 0.1);
-            
-            await sleep();
-
-            if (currentArray[j] > currentArray[j+1]) {
-                swaps++; updateStats();
-                swap(j, j+1);
-                playSound(200, 0.1, 'triangle');
-                renderArray();
-                bars = document.getElementsByClassName('bar');
-                bars[j].style.background = '#00d2ff';
-                bars[j+1].style.background = '#00d2ff';
-                await sleep();
-            }
-            bars[j].style.background = '';
-            bars[j+1].style.background = '';
-        }
-        bars[currentArray.length - 1 - i].style.background = '#39ff14';
-    }
-    gameComplete();
-}
-
-async function selectionSort() {
-    let bars = document.getElementsByClassName('bar');
-    for (let i = 0; i < currentArray.length; i++) {
-        let minIdx = i;
-        bars[i].style.background = '#ff007f'; // Looking for min
-        
-        for (let j = i + 1; j < currentArray.length; j++) {
-            if (!isSorting) return;
-            comparisons++; updateStats();
-            bars[j].style.background = '#00d2ff';
-            playSound(300 + currentArray[j]*5, 0.05);
-            await sleep();
-            
-            if (currentArray[j] < currentArray[minIdx]) {
-                if (minIdx !== i) bars[minIdx].style.background = '';
-                minIdx = j;
-                bars[minIdx].style.background = '#ffdf00'; // Current min
-            } else {
-                bars[j].style.background = '';
-            }
-        }
-        if (minIdx !== i) {
-            swaps++; updateStats();
-            swap(i, minIdx);
-            playSound(150, 0.1, 'triangle');
-            renderArray();
-            bars = document.getElementsByClassName('bar');
-        }
-        bars[i].style.background = '#39ff14'; // Sorted
-    }
-    gameComplete();
-}
-
-async function insertionSort() {
-    let bars = document.getElementsByClassName('bar');
-    bars[0].style.background = '#39ff14';
-    
-    for (let i = 1; i < currentArray.length; i++) {
-        if (!isSorting) return;
-        let key = currentArray[i];
-        let keyLabel = currentLabels[i];
-        let j = i - 1;
-        
-        bars[i].style.background = '#ffdf00';
-        playSound(400, 0.1);
-        await sleep();
-        
-        while (j >= 0 && currentArray[j] > key) {
-            if (!isSorting) return;
-            comparisons++; updateStats();
-            bars[j].style.background = '#00d2ff';
-            playSound(300 + currentArray[j]*3, 0.05);
-            
-            currentArray[j+1] = currentArray[j];
-            currentLabels[j+1] = currentLabels[j];
-            swaps++; updateStats();
-            
-            renderArray();
-            bars = document.getElementsByClassName('bar');
-            bars[j].style.background = '#00d2ff';
-            bars[i].style.background = '#ffdf00';
-            
-            await sleep();
-            bars[j].style.background = '#39ff14';
-            j = j - 1;
-        }
-        currentArray[j+1] = key;
-        currentLabels[j+1] = keyLabel;
-        renderArray();
-        bars = document.getElementsByClassName('bar');
-        
-        for(let k=0; k<=i; k++) bars[k].style.background = '#39ff14';
-    }
-    gameComplete();
-}
-
-// Helpers
-function swap(i, j) {
-    let temp = currentArray[i]; currentArray[i] = currentArray[j]; currentArray[j] = temp;
-    let tempL = currentLabels[i]; currentLabels[i] = currentLabels[j]; currentLabels[j] = tempL;
-}
-
-function sleep() {
-    const speed = document.getElementById('speed').value;
-    return new Promise(resolve => setTimeout(resolve, speed));
-}
-
-// Game Flow
-function resetStats() {
-    comparisons = 0; swaps = 0; secondsElapsed = 0; countdownSeconds = 30;
-    updateStats();
-    clearInterval(timerInterval);
-    document.getElementById('timer').innerText = mode === 'practice' ? "00:00" : "00:30";
-}
-
 function updateStats() {
-    document.getElementById('comparisons').innerText = comparisons;
-    document.getElementById('swaps').innerText = swaps;
+
+    document.getElementById('comparisons').innerText =
+        comparisons;
+
+    document.getElementById('swaps').innerText =
+        swaps;
 }
 
 function resetGame() {
-    isSorting = false;
-    generateArray(scenario);
+
+    comparisons = 0;
+    swaps = 0;
+
+    generateArray();
 }
 
-function startSorting() {
-    if (isSorting) return;
-    isSorting = true;
-    document.getElementById('robot-text').innerHTML = `🤖 <span>Sorting in progress... Watch closely!</span>`;
-    
-    // Start Audio Context on user gesture
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    
-    // Start Timer
-    if (mode === 'practice') {
-        timerInterval = setInterval(() => {
-            secondsElapsed++;
-            let m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
-            let s = (secondsElapsed % 60).toString().padStart(2, '0');
-            document.getElementById('timer').innerText = `${m}:${s}`;
-        }, 1000);
-    } else {
-        timerInterval = setInterval(() => {
-            countdownSeconds--;
-            let s = countdownSeconds.toString().padStart(2, '0');
-            document.getElementById('timer').innerText = `00:${s}`;
-            if (countdownSeconds <= 0) {
-                isSorting = false;
-                clearInterval(timerInterval);
-                playSound(100, 0.5, 'square');
-                alert("Time's up! Try again.");
-                generateArray(scenario);
-            }
-        }, 1000);
-    }
+function setAlgorithm(algo, event) {
 
-    if (algorithm === 'bubble') bubbleSort();
-    else if (algorithm === 'selection') selectionSort();
-    else if (algorithm === 'insertion') insertionSort();
+    algorithm = algo;
+
+    highlight('algo', event.target);
+
+    updateControls();
+
+    resetGame();
 }
 
-function gameComplete() {
-    if (!isSorting) return;
-    clearInterval(timerInterval);
-    isSorting = false;
-    // Victory sound
-    playSound(500, 0.1, 'square');
-    setTimeout(() => playSound(700, 0.3, 'square'), 100);
-    
-    document.getElementById('robot-text').innerHTML = `🤖 <span>Success! The list has been perfectly sorted!</span>`;
+function setMode(m, event) {
+
+    mode = m;
+
+    highlight('mode', event.target);
 }
 
-// UI Controls
-function setAlgorithm(algo) { algorithm = algo; highlight('algo', event.target); }
-function setMode(m) { mode = m; resetStats(); highlight('mode', event.target); }
-function setListType(type) { listType = type; generateArray(scenario); highlight('type', event.target); }
+function setListType(type, event) {
+
+    listType = type;
+
+    highlight('type', event.target);
+
+    generateArray();
+}
 
 function highlight(group, target) {
-    const buttons = document.querySelectorAll(`[id^="${group}-"]`);
-    buttons.forEach(btn => btn.classList.remove('active'));
+
+    const buttons =
+        document.querySelectorAll(`[id^="${group}-"]`);
+
+    buttons.forEach(btn =>
+        btn.classList.remove('active'));
+
     target.classList.add('active');
 }
 
-// Init
+function updateControls() {
+
+    document.getElementById('bubble-controls')
+        .classList.add('hidden');
+
+    document.getElementById('selection-controls')
+        .classList.add('hidden');
+
+    document.getElementById('insertion-controls')
+        .classList.add('hidden');
+
+    if (algorithm === 'bubble') {
+
+        document.getElementById('bubble-controls')
+            .classList.remove('hidden');
+    }
+
+    else if (algorithm === 'selection') {
+
+        document.getElementById('selection-controls')
+            .classList.remove('hidden');
+    }
+
+    else {
+
+        document.getElementById('insertion-controls')
+            .classList.remove('hidden');
+    }
+}
+
+function highlightBars() {
+
+    let bars =
+        document.getElementsByClassName('bar');
+
+    for (let bar of bars) {
+
+        bar.classList.remove(
+            'active',
+            'compare',
+            'minimum',
+            'sorted'
+        );
+    }
+
+    if (bars[currentIndex]) {
+
+        bars[currentIndex]
+            .classList.add('active');
+    }
+
+    if (bars[currentIndex + 1]) {
+
+        bars[currentIndex + 1]
+            .classList.add('compare');
+    }
+}
+
+function startSorting() {
+
+    document.getElementById('robot-text')
+        .innerHTML =
+        "🤖 Use the buttons below to perform the algorithm!";
+}
+
+/* BUBBLE SORT */
+
+function movePointerLeft() {
+
+    if (currentIndex > 0) {
+
+        currentIndex--;
+
+        highlightBars();
+    }
+}
+
+function movePointerRight() {
+
+    if (currentIndex < currentArray.length - 2) {
+
+        currentIndex++;
+
+        highlightBars();
+    }
+}
+
+function compareBars() {
+
+    comparisons++;
+
+    updateStats();
+
+    if (
+        currentArray[currentIndex] >
+        currentArray[currentIndex + 1]
+    ) {
+
+        document.getElementById('robot-text')
+            .innerHTML =
+            "🤖 Swap needed!";
+    }
+
+    else {
+
+        document.getElementById('robot-text')
+            .innerHTML =
+            "🤖 Correct order!";
+    }
+}
+
+function swapBars() {
+
+    if (
+        currentArray[currentIndex] >
+        currentArray[currentIndex + 1]
+    ) {
+
+        swap(currentIndex, currentIndex + 1);
+
+        swaps++;
+
+        renderArray();
+
+        highlightBars();
+
+        updateStats();
+
+        document.getElementById('robot-text')
+            .innerHTML =
+            "🤖 Great swap!";
+    }
+}
+
+/* SELECTION SORT */
+
+function selectCurrent() {
+
+    selectedMin = currentIndex;
+
+    document.getElementById('robot-text')
+        .innerHTML =
+        "🤖 Minimum selected!";
+}
+
+function moveSelectionRight() {
+
+    if (currentIndex < currentArray.length - 1) {
+
+        currentIndex++;
+
+        highlightBars();
+    }
+}
+
+function placeMinimum() {
+
+    swap(selectedMin, 0);
+
+    swaps++;
+
+    renderArray();
+
+    highlightBars();
+
+    updateStats();
+
+    document.getElementById('robot-text')
+        .innerHTML =
+        "🤖 Minimum placed!";
+}
+
+/* INSERTION SORT */
+
+function pickKey() {
+
+    insertionKey = currentIndex;
+
+    document.getElementById('robot-text')
+        .innerHTML =
+        "🤖 Key selected!";
+}
+
+function shiftLeft() {
+
+    if (insertionKey > 0) {
+
+        swap(insertionKey,
+             insertionKey - 1);
+
+        insertionKey--;
+
+        swaps++;
+
+        renderArray();
+
+        highlightBars();
+
+        updateStats();
+
+        document.getElementById('robot-text')
+            .innerHTML =
+            "🤖 Shifted!";
+    }
+}
+
+function insertKey() {
+
+    document.getElementById('robot-text')
+        .innerHTML =
+        "🤖 Key inserted!";
+}
+
+function swap(i, j) {
+
+    let temp = currentArray[i];
+
+    currentArray[i] =
+        currentArray[j];
+
+    currentArray[j] = temp;
+
+    let tempLabel =
+        currentLabels[i];
+
+    currentLabels[i] =
+        currentLabels[j];
+
+    currentLabels[j] =
+        tempLabel;
+}
+
 generateArray();
