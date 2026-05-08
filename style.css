@@ -10,55 +10,39 @@
 
 body {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    font-family: Arial, sans-serif;
+    background: var(--bg-color);
+    color: white;
     overflow: hidden;
 }
 
 .game-container {
     display: flex;
-    width: 95vw;
-    height: 90vh;
-    background: linear-gradient(135deg, #101535 0%, #07091a 100%);
-    border: 3px solid var(--accent-blue);
-    border-radius: 20px;
-    box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
-    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
 }
 
 .sidebar {
     width: 320px;
-    background-color: var(--card-bg);
+    background: var(--card-bg);
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    border-right: 2px solid #20295b;
 }
 
 .game-title {
     text-align: center;
-    font-size: 24px;
     color: var(--accent-blue);
-    text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
-    margin-bottom: 5px;
 }
 
 .game-title span {
     color: var(--accent-pink);
 }
 
-h3 {
-    font-size: 11px;
+.control-group h3 {
+    font-size: 12px;
     color: #8fa0dd;
-    margin-bottom: 5px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
 }
 
 .btn-grid {
@@ -68,65 +52,40 @@ h3 {
 }
 
 button {
-    background-color: #1a224c;
-    border: 1px solid #323f7a;
-    color: white;
     padding: 10px;
     border-radius: 8px;
+    border: none;
+    background: #1a224c;
+    color: white;
     cursor: pointer;
     font-weight: bold;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 button:hover {
-    background-color: #25316f;
-    border-color: var(--accent-blue);
+    background: #25316f;
 }
 
 button.active {
-    background: linear-gradient(to right, #00d2ff, #00bcff);
+    background: var(--accent-blue);
     color: black;
-    border: none;
-    box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
 }
 
 .stats-panel {
     background: #0d1127;
-    padding: 10px;
+    padding: 15px;
     border-radius: 10px;
-    font-family: monospace;
-    font-size: 16px;
-    border: 1px solid #20295b;
-}
-
-.stats-panel p {
-    margin: 5px 0;
 }
 
 #start-btn {
-    background: linear-gradient(to right, #ffdf00, #ffa500);
+    background: orange;
     color: black;
     font-size: 18px;
-    padding: 15px;
-    border-radius: 50px;
-    border: none;
-    margin-top: auto;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(255, 165, 0, 0.4);
-}
-
-#start-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 20px rgba(255, 165, 0, 0.6);
 }
 
 #reset-btn {
-    background: #ff007f;
-    border: none;
+    background: var(--accent-pink);
 }
 
-/* Visualizer Area */
 .visualizer-container {
     flex: 1;
     display: flex;
@@ -134,7 +93,6 @@ button.active {
     justify-content: center;
     align-items: center;
     position: relative;
-    padding: 20px;
 }
 
 .robot-helper {
@@ -143,22 +101,16 @@ button.active {
     left: 20px;
     background: #1a224c;
     padding: 15px;
-    border-radius: 15px;
-    border: 1px solid var(--accent-blue);
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    border-radius: 12px;
 }
 
 #array-container {
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
     width: 90%;
-    height: 55%;
-    border-bottom: 3px solid #20295b;
-    padding-bottom: 10px;
+    height: 60%;
 }
 
 .bar {
@@ -170,20 +122,45 @@ button.active {
     align-items: flex-end;
     padding-bottom: 8px;
     font-weight: bold;
-    font-size: 16px;
-    color: white;
-    transition: height 0.3s ease, background-color 0.3s ease;
+    transition: 0.3s;
 }
 
 .speed-control {
-    margin-top: 30px;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    color: #8fa0dd;
+    margin-top: 20px;
 }
 
-input[type=range] {
-    accent-color: var(--accent-blue);
-    width: 200px;
+.interactive-controls {
+    margin-top: 20px;
+}
+
+.game-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.game-buttons button {
+    background: #16213e;
+    border: 2px solid var(--accent-blue);
+}
+
+.hidden {
+    display: none;
+}
+
+.bar.active {
+    background: var(--accent-yellow);
+}
+
+.bar.compare {
+    background: var(--accent-blue);
+}
+
+.bar.minimum {
+    background: var(--accent-pink);
+}
+
+.bar.sorted {
+    background: var(--accent-green);
 }
