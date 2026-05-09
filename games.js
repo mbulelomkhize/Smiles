@@ -48,21 +48,21 @@ function generateArray(type = 'random') {
     else if (type === 'sorted') {
 
         currentArray =
-            [10,20,30,40,50,60,70,80,90,100];
+            [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
     }
 
     else if (type === 'reversed') {
 
         currentArray =
-            [100,90,80,70,60,50,40,30,20,10];
+            [100, 90, 80, 70, 60, 50, 40, 30, 20, 10];
 
     }
 
     if (listType === 'alphabetical') {
 
         let sorted =
-            [...currentArray].sort((a,b)=>a-b);
+            [...currentArray].sort((a, b) => a - b);
 
         currentArray.forEach(val => {
 
@@ -109,8 +109,8 @@ function renderArray() {
 
         bar.innerText =
             listType === 'numerical'
-            ? currentArray[i]
-            : currentLabels[i];
+                ? currentArray[i]
+                : currentLabels[i];
 
         if (isSortedIndex(i)) {
             bar.classList.add('sorted');
@@ -124,7 +124,23 @@ function renderArray() {
 
 function isSortedIndex(index) {
 
+    // Check if all elements from 0 to index are in sorted order
     for (let i = 0; i < index; i++) {
+
+        if (currentArray[i] > currentArray[i + 1]) {
+            return false;
+        }
+
+    }
+
+    return true;
+
+}
+
+function isArraySorted() {
+
+    // Check if entire array is sorted
+    for (let i = 0; i < currentArray.length - 1; i++) {
 
         if (currentArray[i] > currentArray[i + 1]) {
             return false;
@@ -284,9 +300,11 @@ function startSorting() {
     currentIndex = 0;
     swappedInPass = false;
 
+    const algoName = algorithm.charAt(0).toUpperCase() + algorithm.slice(1);
+
     document.getElementById('robot-text')
         .innerHTML =
-        "🤖 Bubble Sort Started!";
+        `🤖 ${algoName} Sort Started!`;
 
     startSound.currentTime = 0;
     startSound.play();
@@ -307,11 +325,11 @@ function startTimer() {
 
             let mins =
                 String(Math.floor(timer / 60))
-                .padStart(2, '0');
+                    .padStart(2, '0');
 
             let secs =
                 String(timer % 60)
-                .padStart(2, '0');
+                    .padStart(2, '0');
 
             document.getElementById('timer').innerText =
                 `${mins}:${secs}`;
@@ -324,11 +342,11 @@ function startTimer() {
 
             let mins =
                 String(Math.floor(countdown / 60))
-                .padStart(2, '0');
+                    .padStart(2, '0');
 
             let secs =
                 String(countdown % 60)
-                .padStart(2, '0');
+                    .padStart(2, '0');
 
             document.getElementById('timer').innerText =
                 `${mins}:${secs}`;
@@ -357,30 +375,28 @@ function stopTimer() {
 
 function checkWin() {
 
-    for (let i = 0; i < currentArray.length - 1; i++) {
+    if (isArraySorted()) {
 
-        if (currentArray[i] > currentArray[i + 1]) {
-            return false;
-        }
+        stopTimer();
+
+        disableControls();
+
+        renderArray();
+
+        document.getElementById('robot-text')
+            .innerHTML =
+            `🏆 Finished in ${timer}s!`;
+
+        finishSound.currentTime = 0;
+        finishSound.play();
+
+        alert("🎉 YOU WIN!");
+
+        return true;
 
     }
 
-    stopTimer();
-
-    disableControls();
-
-    renderArray();
-
-    document.getElementById('robot-text')
-        .innerHTML =
-        "🏆 Array Successfully Sorted!";
-
-    finishSound.currentTime = 0;
-    finishSound.play();
-
-    alert("🎉 YOU WIN!");
-
-    return true;
+    return false;
 
 }
 
@@ -489,22 +505,10 @@ function compareBars(choice) {
 
         if (!swappedInPass) {
 
-            stopTimer();
-
-            disableControls();
-
-            document.getElementById('robot-text')
-                .innerHTML =
-                `🏆 Finished in ${timer}s!`;
-
-            finishSound.currentTime = 0;
-            finishSound.play();
-
-            alert("🎉 ARRAY SORTED!");
-
-            renderArray();
-
-            return;
+            if (checkWin()) {
+                renderArray();
+                return;
+            }
 
         }
 
@@ -572,6 +576,8 @@ function placeMinimum() {
 
     swaps++;
 
+    updateStats();
+
     selectionStart++;
 
     currentIndex = selectionStart;
@@ -579,8 +585,6 @@ function placeMinimum() {
     selectedMin = selectionStart;
 
     renderArray();
-
-    updateStats();
 
     highlightBars();
 
@@ -602,6 +606,8 @@ function pickKey() {
         .innerHTML =
         "🤖 Key selected!";
 
+    highlightBars();
+
 }
 
 function shiftLeft() {
@@ -613,7 +619,7 @@ function shiftLeft() {
     ) {
 
         swap(insertionKey,
-             insertionKey - 1);
+            insertionKey - 1);
 
         insertionKey--;
 
@@ -638,17 +644,24 @@ function insertKey() {
 
     currentIndex++;
 
-    if (currentIndex >= currentArray.length - 1) {
-        currentIndex = currentArray.length - 2;
+    if (currentIndex >= currentArray.length) {
+
+        if (checkWin()) {
+            renderArray();
+            return;
+        }
+
+        currentIndex = currentArray.length - 1;
+
     }
+
+    insertionKey = currentIndex + 1;
 
     highlightBars();
 
     document.getElementById('robot-text')
         .innerHTML =
-        "🤖 Key inserted!";
-
-    checkWin();
+        "🤖 Key inserted! Pick next key.";
 
 }
 
