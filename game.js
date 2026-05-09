@@ -13,11 +13,18 @@ let selectedMin = 0;
 let insertionKey = 1;
 let selectionStart = 0;
 
+let swappedInPass = false;
+
 const ARRAY_SIZE = 10;
 
 let timer = 0;
 let interval = null;
 let countdown = 120;
+
+const correctSound = new Audio("correct.mp3");
+const wrongSound = new Audio("wrong.mp3");
+const startSound = new Audio("start.mp3");
+const finishSound = new Audio("finish.mp3");
 
 function generateArray(type = 'random') {
 
@@ -274,9 +281,17 @@ function startSorting() {
 
     startTimer();
 
+    currentIndex = 0;
+    swappedInPass = false;
+
     document.getElementById('robot-text')
         .innerHTML =
-        "🤖 Start sorting the array!";
+        "🤖 Bubble Sort Started!";
+
+    startSound.currentTime = 0;
+    startSound.play();
+
+    highlightBars();
 
 }
 
@@ -360,6 +375,9 @@ function checkWin() {
         .innerHTML =
         "🏆 Array Successfully Sorted!";
 
+    finishSound.currentTime = 0;
+    finishSound.play();
+
     alert("🎉 YOU WIN!");
 
     return true;
@@ -393,33 +411,6 @@ function enableControls() {
 }
 
 /* BUBBLE SORT */
-
-let swappedInPass = false;
-
-const correctSound = new Audio("correct.mp3");
-const wrongSound = new Audio("wrong.mp3");
-const startSound = new Audio("start.mp3");
-const finishSound = new Audio("finish.mp3");
-
-function startSorting() {
-
-    enableControls();
-
-    startTimer();
-
-    currentIndex = 0;
-    swappedInPass = false;
-
-    document.getElementById('robot-text')
-        .innerHTML =
-        "🤖 Bubble Sort Started!";
-
-    startSound.currentTime = 0;
-    startSound.play();
-
-    highlightBars();
-
-}
 
 function movePointerLeft() {
 
@@ -682,5 +673,3 @@ function swap(i, j) {
 }
 
 generateArray();
-```
-
