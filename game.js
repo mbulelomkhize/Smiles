@@ -11,6 +11,7 @@ let swaps = 0;
 let currentIndex = 0;
 let selectedMin = 0;
 let insertionKey = 1;
+let selectionStart = 0;
 
 const ARRAY_SIZE = 10;
 
@@ -71,6 +72,7 @@ function generateArray(type = 'random') {
     currentIndex = 0;
     selectedMin = 0;
     insertionKey = 1;
+    selectionStart = 0;
 
     comparisons = 0;
     swaps = 0;
@@ -148,6 +150,8 @@ function resetGame() {
         "00:00";
 
     generateArray();
+
+    enableControls();
 
     document.getElementById('robot-text').innerHTML =
         "🤖 Game reset!";
@@ -266,6 +270,8 @@ function highlightBars() {
 
 function startSorting() {
 
+    enableControls();
+
     startTimer();
 
     document.getElementById('robot-text')
@@ -316,6 +322,8 @@ function startTimer() {
 
                 stopTimer();
 
+                disableControls();
+
                 alert("⏰ Time Over!");
 
             }
@@ -344,6 +352,10 @@ function checkWin() {
 
     stopTimer();
 
+    disableControls();
+
+    renderArray();
+
     document.getElementById('robot-text')
         .innerHTML =
         "🏆 Array Successfully Sorted!";
@@ -351,6 +363,32 @@ function checkWin() {
     alert("🎉 YOU WIN!");
 
     return true;
+
+}
+
+function disableControls() {
+
+    const buttons =
+        document.querySelectorAll('.game-buttons button');
+
+    buttons.forEach(btn => {
+
+        btn.disabled = true;
+
+    });
+
+}
+
+function enableControls() {
+
+    const buttons =
+        document.querySelectorAll('.game-buttons button');
+
+    buttons.forEach(btn => {
+
+        btn.disabled = false;
+
+    });
 
 }
 
@@ -459,6 +497,10 @@ function moveSelectionRight() {
 
             selectedMin = currentIndex;
 
+            document.getElementById('robot-text')
+                .innerHTML =
+                "🤖 New minimum found!";
+
         }
 
         updateStats();
@@ -471,15 +513,25 @@ function moveSelectionRight() {
 
 function placeMinimum() {
 
-    swap(selectedMin, 0);
+    swap(selectionStart, selectedMin);
 
     swaps++;
+
+    selectionStart++;
+
+    currentIndex = selectionStart;
+
+    selectedMin = selectionStart;
 
     renderArray();
 
     updateStats();
 
     highlightBars();
+
+    document.getElementById('robot-text')
+        .innerHTML =
+        "🤖 Minimum placed correctly!";
 
     checkWin();
 
@@ -511,7 +563,6 @@ function shiftLeft() {
         insertionKey--;
 
         swaps++;
-
         comparisons++;
 
         renderArray();
@@ -520,6 +571,10 @@ function shiftLeft() {
 
         highlightBars();
 
+        document.getElementById('robot-text')
+            .innerHTML =
+            "🤖 Shifted left!";
+
     }
 
 }
@@ -527,6 +582,12 @@ function shiftLeft() {
 function insertKey() {
 
     currentIndex++;
+
+    if (currentIndex >= currentArray.length - 1) {
+        currentIndex = currentArray.length - 2;
+    }
+
+    highlightBars();
 
     document.getElementById('robot-text')
         .innerHTML =
@@ -557,3 +618,14 @@ function swap(i, j) {
 }
 
 generateArray();
+```
+
+After replacing the file:
+
+1. Save the file
+2. Upload to GitHub
+3. Commit changes
+4. Wait about 1 minute
+5. Press CTRL + SHIFT + R on the website
+
+Your game should then work properly.
