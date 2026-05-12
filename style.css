@@ -13,21 +13,29 @@ body {
     font-family: Arial, sans-serif;
     background: var(--bg-color);
     color: white;
-    overflow: hidden;
+
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .game-container {
     display: flex;
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .sidebar {
     width: 320px;
+    min-width: 280px;
+    max-width: 350px;
+
     background: var(--card-bg);
+
     padding: 20px;
+
     display: flex;
     flex-direction: column;
+
     gap: 15px;
 }
 
@@ -53,16 +61,29 @@ body {
 
 button {
     padding: 10px;
+
     border-radius: 8px;
+
     border: none;
+
     background: #1a224c;
+
     color: white;
+
     cursor: pointer;
+
     font-weight: bold;
+
+    transition: 0.2s ease;
 }
 
 button:hover {
     background: #25316f;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 button.active {
@@ -88,65 +109,91 @@ button.active {
 
 .visualizer-container {
     flex: 1;
+
     display: flex;
     flex-direction: column;
+
     justify-content: center;
     align-items: center;
+
     position: relative;
+
+    padding: 20px;
 }
 
 .robot-helper {
     position: absolute;
-    top: 20px;
-    left: 20px;
+
+    top: 10px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 100;
+
     background: #1a224c;
+
     padding: 15px;
+
     border-radius: 12px;
 }
 
 #array-container {
+
     display: flex;
+
     align-items: flex-end;
+
     justify-content: center;
+
     gap: 10px;
+
     width: 90%;
-    height: 60%;
+
+    height: 65vh;
+
+    min-height: 400px;
 }
 
 .bar {
-    width: 45px;
-    background: linear-gradient(to top, var(--accent-pink), #ff66b2);
+
+    min-width: 40px;
+
+    width: 6%;
+
+    max-width: 55px;
+
+    background: linear-gradient(
+        to top,
+        var(--accent-pink),
+        #ff66b2
+    );
+
     border-radius: 6px 6px 0 0;
+
     display: flex;
+
     justify-content: center;
+
     align-items: flex-end;
+
     padding-bottom: 8px;
+
     font-weight: bold;
-    transition: 0.3s;
+
+    transition:
+        height 0.3s ease,
+        transform 0.2s ease,
+        background 0.2s ease;
+
+    color: white;
+
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
-.speed-control {
-    margin-top: 20px;
-}
-
-.interactive-controls {
-    margin-top: 20px;
-}
-
-.game-buttons {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.game-buttons button {
-    background: #16213e;
-    border: 2px solid var(--accent-blue);
-}
-
-.hidden {
-    display: none;
+.bar:hover {
+    transform: translateY(-5px);
 }
 
 .bar.active {
@@ -163,4 +210,80 @@ button.active {
 
 .bar.sorted {
     background: var(--accent-green);
+}
+
+.speed-control {
+    margin-top: 20px;
+}
+
+.interactive-controls {
+    margin-top: 20px;
+}
+
+.game-buttons {
+
+    display: flex;
+
+    gap: 15px;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    max-width: 90%;
+}
+
+.game-buttons button {
+    background: #16213e;
+    border: 2px solid var(--accent-blue);
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 900px) {
+
+    .game-container {
+
+        flex-direction: column;
+
+        overflow-y: auto;
+
+    }
+
+    .sidebar {
+
+        width: 100%;
+
+        max-width: 100%;
+
+        min-width: 100%;
+
+    }
+
+    .visualizer-container {
+
+        padding: 20px;
+
+    }
+
+    #array-container {
+
+        gap: 5px;
+
+        width: 100%;
+
+        overflow-x: auto;
+
+    }
+
+    .bar {
+
+        min-width: 30px;
+
+        font-size: 12px;
+
+    }
+
 }
