@@ -30,17 +30,17 @@
 
                 <button id="algo-bubble"
                         class="active"
-                        onclick="setAlgorithm('bubble', event)">
+                        onclick="setAlgorithm('bubble', this)">
                     Bubble Sort
                 </button>
 
                 <button id="algo-selection"
-                        onclick="setAlgorithm('selection', event)">
+                        onclick="setAlgorithm('selection', this)">
                     Selection Sort
                 </button>
 
                 <button id="algo-insertion"
-                        onclick="setAlgorithm('insertion', event)">
+                        onclick="setAlgorithm('insertion', this)">
                     Insertion Sort
                 </button>
 
@@ -57,12 +57,12 @@
 
                 <button id="mode-practice"
                         class="active"
-                        onclick="setMode('practice', event)">
+                        onclick="setMode('practice', this)">
                     Practice
                 </button>
 
                 <button id="mode-countdown"
-                        onclick="setMode('countdown', event)">
+                        onclick="setMode('countdown', this)">
                     Countdown
                 </button>
 
@@ -79,12 +79,12 @@
 
                 <button id="type-num"
                         class="active"
-                        onclick="setListType('numerical', event)">
+                        onclick="setListType('numerical', this)">
                     Numerical
                 </button>
 
                 <button id="type-alpha"
-                        onclick="setListType('alphabetical', event)">
+                        onclick="setListType('alphabetical', this)">
                     Alphabetical
                 </button>
 
@@ -118,15 +118,18 @@
         <!-- STATS -->
         <div class="stats-panel">
 
-            <p>⚡ Comparisons:
+            <p>
+                ⚡ Comparisons:
                 <span id="comparisons">0</span>
             </p>
 
-            <p>🔄 Swaps:
+            <p>
+                🔄 Swaps:
                 <span id="swaps">0</span>
             </p>
 
-            <p>⏱️ Time:
+            <p>
+                ⏱️ Time:
                 <span id="timer">00:00</span>
             </p>
 
@@ -139,7 +142,7 @@
 
         <button id="reset-btn"
                 onclick="resetGame()">
-            Reset Array 🔄
+            RESET GAME 🔄
         </button>
 
     </div>
@@ -217,20 +220,6 @@
                 </button>
 
             </div>
-
-        </div>
-
-        <!-- SPEED -->
-        <div class="speed-control">
-
-            <span>⚡ Game Speed:</span>
-
-            <input type="range"
-                   id="speed"
-                   min="50"
-                   max="1000"
-                   value="300"
-                   style="direction: rtl;">
 
         </div>
 
