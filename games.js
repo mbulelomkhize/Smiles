@@ -21,10 +21,7 @@ let timer = 0;
 let interval = null;
 let countdown = 120;
 
-const correctSound = new Audio("correct.mp3");
-const wrongSound = new Audio("wrong.mp3");
-const startSound = new Audio("start.mp3");
-const finishSound = new Audio("finish.mp3");
+let gameStarted = false;
 
 function generateArray(type = 'random') {
 
@@ -48,29 +45,27 @@ function generateArray(type = 'random') {
     else if (type === 'sorted') {
 
         currentArray =
-            [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+            [10,20,30,40,50,60,70,80,90,100];
 
     }
 
-    else if (type === 'reversed') {
+    else {
 
         currentArray =
-            [100, 90, 80, 70, 60, 50, 40, 30, 20, 10];
+            [100,90,80,70,60,50,40,30,20,10];
 
     }
 
     if (listType === 'alphabetical') {
 
         let sorted =
-            [...currentArray].sort((a, b) => a - b);
+            [...currentArray].sort((a,b)=>a-b);
 
         currentArray.forEach(val => {
 
             let index = sorted.indexOf(val);
 
-            currentLabels.push(
-                letters[index]
-            );
+            currentLabels.push(letters[index]);
 
         });
 
@@ -87,7 +82,6 @@ function generateArray(type = 'random') {
     renderArray();
     updateStats();
     highlightBars();
-
 }
 
 function renderArray() {
@@ -117,14 +111,11 @@ function renderArray() {
         }
 
         container.appendChild(bar);
-
     }
-
 }
 
 function isSortedIndex(index) {
 
-    // Check if all elements from 0 to index are in sorted order
     for (let i = 0; i < index; i++) {
 
         if (currentArray[i] > currentArray[i + 1]) {
@@ -134,12 +125,10 @@ function isSortedIndex(index) {
     }
 
     return true;
-
 }
 
 function isArraySorted() {
 
-    // Check if entire array is sorted
     for (let i = 0; i < currentArray.length - 1; i++) {
 
         if (currentArray[i] > currentArray[i + 1]) {
@@ -149,7 +138,6 @@ function isArraySorted() {
     }
 
     return true;
-
 }
 
 function updateStats() {
@@ -159,12 +147,13 @@ function updateStats() {
 
     document.getElementById('swaps').innerText =
         swaps;
-
 }
 
 function resetGame() {
 
     stopTimer();
+
+    gameStarted = false;
 
     timer = 0;
     countdown = 120;
@@ -172,13 +161,14 @@ function resetGame() {
     document.getElementById('timer').innerText =
         "00:00";
 
-    generateArray();
+    document.getElementById('start-btn').disabled = false;
 
-    enableControls();
+    generateArray('random');
+
+    disableControls();
 
     document.getElementById('robot-text').innerHTML =
         "🤖 Game reset!";
-
 }
 
 function setAlgorithm(algo, event) {
@@ -190,7 +180,6 @@ function setAlgorithm(algo, event) {
     updateControls();
 
     resetGame();
-
 }
 
 function setMode(m, event) {
@@ -198,7 +187,6 @@ function setMode(m, event) {
     mode = m;
 
     highlight('mode', event.target);
-
 }
 
 function setListType(type, event) {
@@ -208,7 +196,6 @@ function setListType(type, event) {
     highlight('type', event.target);
 
     generateArray();
-
 }
 
 function highlight(group, target) {
@@ -220,7 +207,6 @@ function highlight(group, target) {
         btn.classList.remove('active'));
 
     target.classList.add('active');
-
 }
 
 function updateControls() {
@@ -252,9 +238,7 @@ function updateControls() {
 
         document.getElementById('insertion-controls')
             .classList.remove('hidden');
-
     }
-
 }
 
 function highlightBars() {
@@ -269,7 +253,6 @@ function highlightBars() {
             'compare',
             'minimum'
         );
-
     }
 
     if (bars[currentIndex]) {
@@ -286,31 +269,30 @@ function highlightBars() {
 
         bars[selectedMin]
             .classList.add('minimum');
-
     }
-
 }
 
 function startSorting() {
+
+    stopTimer();
+
+    gameStarted = true;
+
+    document.getElementById('start-btn').disabled = true;
 
     enableControls();
 
     startTimer();
 
     currentIndex = 0;
-    swappedInPass = false;
 
-    const algoName = algorithm.charAt(0).toUpperCase() + algorithm.slice(1);
+    swappedInPass = false;
 
     document.getElementById('robot-text')
         .innerHTML =
-        `🤖 ${algoName} Sort Started!`;
-
-    startSound.currentTime = 0;
-    startSound.play();
+        `🤖 ${algorithm.toUpperCase()} SORT STARTED!`;
 
     highlightBars();
-
 }
 
 function startTimer() {
@@ -358,19 +340,15 @@ function startTimer() {
                 disableControls();
 
                 alert("⏰ Time Over!");
-
             }
-
         }
 
     }, 1000);
-
 }
 
 function stopTimer() {
 
     clearInterval(interval);
-
 }
 
 function checkWin() {
@@ -381,23 +359,18 @@ function checkWin() {
 
         disableControls();
 
+        gameStarted = false;
+
+        document.getElementById('start-btn').disabled = false;
+
         renderArray();
-
-        document.getElementById('robot-text')
-            .innerHTML =
-            `🏆 Finished in ${timer}s!`;
-
-        finishSound.currentTime = 0;
-        finishSound.play();
 
         alert("🎉 YOU WIN!");
 
         return true;
-
     }
 
     return false;
-
 }
 
 function disableControls() {
@@ -410,7 +383,6 @@ function disableControls() {
         btn.disabled = true;
 
     });
-
 }
 
 function enableControls() {
@@ -423,38 +395,35 @@ function enableControls() {
         btn.disabled = false;
 
     });
-
 }
 
-/* BUBBLE SORT */
-
 function movePointerLeft() {
+
+    if (!gameStarted) return;
 
     if (currentIndex > 0) {
 
         currentIndex--;
 
         highlightBars();
-
     }
-
 }
 
 function movePointerRight() {
+
+    if (!gameStarted) return;
 
     if (currentIndex < currentArray.length - 2) {
 
         currentIndex++;
 
         highlightBars();
-
     }
-
 }
 
 function compareBars(choice) {
 
-    if (currentArray.length === 0) return;
+    if (!gameStarted) return;
 
     let a = currentArray[currentIndex];
     let b = currentArray[currentIndex + 1];
@@ -474,29 +443,7 @@ function compareBars(choice) {
             swaps++;
 
             swappedInPass = true;
-
         }
-
-        document.getElementById('robot-text')
-            .innerHTML =
-            "🤖 Correct move!";
-
-        correctSound.currentTime = 0;
-        correctSound.play();
-
-    }
-
-    else {
-
-        document.getElementById('robot-text')
-            .innerHTML =
-            "🤖 Wrong move! (+2 seconds)";
-
-        wrongSound.currentTime = 0;
-        wrongSound.play();
-
-        timer += 2;
-
     }
 
     currentIndex++;
@@ -505,43 +452,32 @@ function compareBars(choice) {
 
         if (!swappedInPass) {
 
-            if (checkWin()) {
-                renderArray();
-                return;
-            }
-
+            checkWin();
+            return;
         }
 
         currentIndex = 0;
+
         swappedInPass = false;
-
-        document.getElementById('robot-text')
-            .innerHTML =
-            "🤖 New pass started!";
-
     }
 
     renderArray();
 
     highlightBars();
-
 }
-
-/* SELECTION SORT */
 
 function selectCurrent() {
 
+    if (!gameStarted) return;
+
     selectedMin = currentIndex;
 
-    document.getElementById('robot-text')
-        .innerHTML =
-        "🤖 Minimum selected!";
-
     highlightBars();
-
 }
 
 function moveSelectionRight() {
+
+    if (!gameStarted) return;
 
     if (currentIndex < currentArray.length - 1) {
 
@@ -555,22 +491,17 @@ function moveSelectionRight() {
         ) {
 
             selectedMin = currentIndex;
-
-            document.getElementById('robot-text')
-                .innerHTML =
-                "🤖 New minimum found!";
-
         }
 
         updateStats();
 
         highlightBars();
-
     }
-
 }
 
 function placeMinimum() {
+
+    if (!gameStarted) return;
 
     swap(selectionStart, selectedMin);
 
@@ -580,6 +511,12 @@ function placeMinimum() {
 
     selectionStart++;
 
+    if (selectionStart >= currentArray.length - 1) {
+
+        checkWin();
+        return;
+    }
+
     currentIndex = selectionStart;
 
     selectedMin = selectionStart;
@@ -587,30 +524,20 @@ function placeMinimum() {
     renderArray();
 
     highlightBars();
-
-    document.getElementById('robot-text')
-        .innerHTML =
-        "🤖 Minimum placed correctly!";
-
-    checkWin();
-
 }
-
-/* INSERTION SORT */
 
 function pickKey() {
 
+    if (!gameStarted) return;
+
     insertionKey = currentIndex + 1;
 
-    document.getElementById('robot-text')
-        .innerHTML =
-        "🤖 Key selected!";
-
     highlightBars();
-
 }
 
 function shiftLeft() {
+
+    if (!gameStarted) return;
 
     if (
         insertionKey > 0 &&
@@ -631,38 +558,24 @@ function shiftLeft() {
         updateStats();
 
         highlightBars();
-
-        document.getElementById('robot-text')
-            .innerHTML =
-            "🤖 Shifted left!";
-
     }
-
 }
 
 function insertKey() {
 
+    if (!gameStarted) return;
+
     currentIndex++;
 
-    if (currentIndex >= currentArray.length) {
+    if (currentIndex >= currentArray.length - 1) {
 
-        if (checkWin()) {
-            renderArray();
-            return;
-        }
-
-        currentIndex = currentArray.length - 1;
-
+        checkWin();
+        return;
     }
 
     insertionKey = currentIndex + 1;
 
     highlightBars();
-
-    document.getElementById('robot-text')
-        .innerHTML =
-        "🤖 Key inserted! Pick next key.";
-
 }
 
 function swap(i, j) {
@@ -682,7 +595,8 @@ function swap(i, j) {
 
     currentLabels[j] =
         tempLabel;
-
 }
 
 generateArray();
+
+disableControls();
