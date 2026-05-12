@@ -23,9 +23,9 @@ let countdown = 120;
 
 let gameStarted = false;
 
-/* ---------------------- */
-/* GENERATE ARRAY */
-/* ---------------------- */
+/* =========================
+   GENERATE ARRAY
+========================= */
 
 function generateArray(type = 'random') {
 
@@ -54,7 +54,7 @@ function generateArray(type = 'random') {
 
     }
 
-    else {
+    else if (type === 'reversed') {
 
         currentArray =
             [100,90,80,70,60,50,40,30,20,10];
@@ -63,19 +63,15 @@ function generateArray(type = 'random') {
 
     if (listType === 'alphabetical') {
 
-        let sorted =
-            [...currentArray].sort((a,b)=>a-b);
+        currentLabels = [];
 
-        currentArray.forEach(val => {
-
-            let index =
-                sorted.indexOf(val);
+        for (let i = 0; i < currentArray.length; i++) {
 
             currentLabels.push(
-                letters[index]
+                letters[i]
             );
 
-        });
+        }
 
     }
 
@@ -90,41 +86,48 @@ function generateArray(type = 'random') {
     renderArray();
     updateStats();
     highlightBars();
+
 }
 
-/* ---------------------- */
-/* RENDER */
-/* ---------------------- */
+/* =========================
+   RENDER ARRAY
+========================= */
 
 function renderArray() {
 
     const container =
         document.getElementById('array-container');
 
+    if (!container) return;
+
     container.innerHTML = '';
 
     for (let i = 0; i < currentArray.length; i++) {
 
+        if (currentArray[i] === undefined) continue;
+
         const bar =
             document.createElement('div');
 
-        bar.classList.add('bar');
+        bar.className = 'bar';
 
         bar.style.height =
             `${currentArray[i] * 3}px`;
 
-        bar.innerText =
+        bar.textContent =
             listType === 'numerical'
             ? currentArray[i]
-            : currentLabels[i];
+            : currentLabels[i] || '';
 
         container.appendChild(bar);
+
     }
+
 }
 
-/* ---------------------- */
-/* STATS */
-/* ---------------------- */
+/* =========================
+   UPDATE STATS
+========================= */
 
 function updateStats() {
 
@@ -133,11 +136,12 @@ function updateStats() {
 
     document.getElementById('swaps')
         .innerText = swaps;
+
 }
 
-/* ---------------------- */
-/* RESET */
-/* ---------------------- */
+/* =========================
+   RESET GAME
+========================= */
 
 function resetGame() {
 
@@ -156,13 +160,17 @@ function resetGame() {
 
     generateArray();
 
+    enableControls();
+
     document.getElementById('robot-text')
-        .innerHTML = "🤖 Game reset!";
+        .innerHTML =
+        "🤖 Game Reset!";
+
 }
 
-/* ---------------------- */
-/* BUTTON HIGHLIGHT */
-/* ---------------------- */
+/* =========================
+   HIGHLIGHT BUTTONS
+========================= */
 
 function highlight(group, button) {
 
@@ -176,11 +184,12 @@ function highlight(group, button) {
     );
 
     button.classList.add('active');
+
 }
 
-/* ---------------------- */
-/* SETTERS */
-/* ---------------------- */
+/* =========================
+   SETTINGS
+========================= */
 
 function setAlgorithm(algo, button) {
 
@@ -191,6 +200,7 @@ function setAlgorithm(algo, button) {
     updateControls();
 
     resetGame();
+
 }
 
 function setMode(m, button) {
@@ -198,6 +208,7 @@ function setMode(m, button) {
     mode = m;
 
     highlight('mode', button);
+
 }
 
 function setListType(type, button) {
@@ -207,11 +218,52 @@ function setListType(type, button) {
     highlight('type', button);
 
     generateArray();
+
 }
 
-/* ---------------------- */
-/* CONTROLS */
-/* ---------------------- */
+/* =========================
+   ENABLE CONTROLS
+========================= */
+
+function enableControls() {
+
+    document.querySelectorAll(
+        '.game-buttons button'
+    ).forEach(btn => {
+
+        btn.disabled = false;
+
+        btn.style.opacity = "1";
+
+        btn.style.pointerEvents = "auto";
+
+    });
+
+}
+
+/* =========================
+   DISABLE CONTROLS
+========================= */
+
+function disableControls() {
+
+    document.querySelectorAll(
+        '.game-buttons button'
+    ).forEach(btn => {
+
+        btn.disabled = true;
+
+        btn.style.opacity = "0.5";
+
+        btn.style.pointerEvents = "none";
+
+    });
+
+}
+
+/* =========================
+   UPDATE CONTROLS
+========================= */
 
 function updateControls() {
 
@@ -228,24 +280,30 @@ function updateControls() {
 
         document.getElementById('bubble-controls')
             .classList.remove('hidden');
+
     }
 
     else if (algorithm === 'selection') {
 
         document.getElementById('selection-controls')
             .classList.remove('hidden');
+
     }
 
-    else {
+    else if (algorithm === 'insertion') {
 
         document.getElementById('insertion-controls')
             .classList.remove('hidden');
+
     }
+
+    enableControls();
+
 }
 
-/* ---------------------- */
-/* HIGHLIGHT BARS */
-/* ---------------------- */
+/* =========================
+   HIGHLIGHT BARS
+========================= */
 
 function highlightBars() {
 
@@ -257,35 +315,41 @@ function highlightBars() {
         bar.classList.remove(
             'active',
             'compare',
-            'minimum'
+            'minimum',
+            'sorted'
         );
+
     }
 
     if (bars[currentIndex]) {
 
         bars[currentIndex]
             .classList.add('active');
+
     }
 
     if (bars[currentIndex + 1]) {
 
         bars[currentIndex + 1]
             .classList.add('compare');
+
     }
 
-    if (algorithm === 'selection') {
+    if (
+        algorithm === 'selection' &&
+        bars[selectedMin]
+    ) {
 
-        if (bars[selectedMin]) {
+        bars[selectedMin]
+            .classList.add('minimum');
 
-            bars[selectedMin]
-                .classList.add('minimum');
-        }
     }
+
 }
 
-/* ---------------------- */
-/* START */
-/* ---------------------- */
+/* =========================
+   START GAME
+========================= */
 
 function startSorting() {
 
@@ -293,25 +357,36 @@ function startSorting() {
 
     gameStarted = true;
 
+    currentIndex = 0;
+
+    selectedMin = 0;
+
+    insertionKey = 1;
+
+    selectionStart = 0;
+
+    swappedInPass = false;
+
     document.getElementById('start-btn')
         .disabled = true;
 
     startTimer();
 
-    currentIndex = 0;
+    enableControls();
 
-    swappedInPass = false;
+    renderArray();
+
+    highlightBars();
 
     document.getElementById('robot-text')
         .innerHTML =
         `🤖 ${algorithm.toUpperCase()} SORT STARTED!`;
 
-    highlightBars();
 }
 
-/* ---------------------- */
-/* TIMER */
-/* ---------------------- */
+/* =========================
+   TIMER
+========================= */
 
 function startTimer() {
 
@@ -334,6 +409,7 @@ function startTimer() {
             document.getElementById('timer')
                 .innerText =
                 `${mins}:${secs}`;
+
         }
 
         else {
@@ -356,34 +432,45 @@ function startTimer() {
 
                 stopTimer();
 
-                alert("⏰ Time Over!");
+                disableControls();
+
+                alert("⏰ TIME OVER!");
+
             }
+
         }
 
     }, 1000);
+
 }
 
 function stopTimer() {
 
     clearInterval(interval);
+
 }
 
-/* ---------------------- */
-/* WIN */
-/* ---------------------- */
+/* =========================
+   WIN CHECK
+========================= */
 
 function isArraySorted() {
 
     for (let i = 0; i < currentArray.length - 1; i++) {
 
-        if (currentArray[i] >
-            currentArray[i + 1]) {
+        if (
+            currentArray[i] >
+            currentArray[i + 1]
+        ) {
 
             return false;
+
         }
+
     }
 
     return true;
+
 }
 
 function checkWin() {
@@ -397,17 +484,21 @@ function checkWin() {
         document.getElementById('start-btn')
             .disabled = false;
 
+        disableControls();
+
         alert("🎉 YOU WIN!");
 
         return true;
+
     }
 
     return false;
+
 }
 
-/* ---------------------- */
-/* SWAP */
-/* ---------------------- */
+/* =========================
+   SWAP
+========================= */
 
 function swap(i, j) {
 
@@ -417,40 +508,40 @@ function swap(i, j) {
     currentArray[i] =
         currentArray[j];
 
-    currentArray[j] = temp;
+    currentArray[j] =
+        temp;
+
 }
 
-/* ---------------------- */
-/* BUBBLE SORT */
-/* ---------------------- */
+/* =========================
+   BUBBLE SORT
+========================= */
 
 function movePointerLeft() {
-
-    if (!gameStarted) return;
 
     if (currentIndex > 0) {
 
         currentIndex--;
 
         highlightBars();
+
     }
+
 }
 
 function movePointerRight() {
-
-    if (!gameStarted) return;
 
     if (currentIndex < currentArray.length - 2) {
 
         currentIndex++;
 
         highlightBars();
+
     }
+
 }
 
 function compareBars(choice) {
-
-    if (!gameStarted) return;
 
     let a =
         currentArray[currentIndex];
@@ -476,7 +567,9 @@ function compareBars(choice) {
             swaps++;
 
             swappedInPass = true;
+
         }
+
     }
 
     currentIndex++;
@@ -488,37 +581,39 @@ function compareBars(choice) {
             checkWin();
 
             return;
+
         }
 
         currentIndex = 0;
 
         swappedInPass = false;
+
     }
 
     renderArray();
 
     highlightBars();
+
 }
 
-/* ---------------------- */
-/* SELECTION SORT */
-/* ---------------------- */
+/* =========================
+   SELECTION SORT
+========================= */
 
 function selectCurrent() {
-
-    if (!gameStarted) return;
 
     selectedMin = currentIndex;
 
     highlightBars();
+
 }
 
 function moveSelectionRight() {
 
-    if (!gameStarted) return;
-
-    if (currentIndex <
-        currentArray.length - 1) {
+    if (
+        currentIndex <
+        currentArray.length - 1
+    ) {
 
         currentIndex++;
 
@@ -530,17 +625,18 @@ function moveSelectionRight() {
         ) {
 
             selectedMin = currentIndex;
+
         }
 
         updateStats();
 
         highlightBars();
+
     }
+
 }
 
 function placeMinimum() {
-
-    if (!gameStarted) return;
 
     swap(selectionStart, selectedMin);
 
@@ -550,12 +646,15 @@ function placeMinimum() {
 
     selectionStart++;
 
-    if (selectionStart >=
-        currentArray.length - 1) {
+    if (
+        selectionStart >=
+        currentArray.length - 1
+    ) {
 
         checkWin();
 
         return;
+
     }
 
     currentIndex = selectionStart;
@@ -565,24 +664,38 @@ function placeMinimum() {
     renderArray();
 
     highlightBars();
+
 }
 
-/* ---------------------- */
-/* INSERTION SORT */
-/* ---------------------- */
+/* =========================
+   INSERTION SORT
+========================= */
 
 function pickKey() {
 
-    if (!gameStarted) return;
+    insertionKey =
+        currentIndex + 1;
 
-    insertionKey = currentIndex + 1;
+    if (
+        insertionKey >=
+        currentArray.length
+    ) {
+
+        checkWin();
+
+        return;
+
+    }
 
     highlightBars();
+
+    document.getElementById('robot-text')
+        .innerHTML =
+        "🤖 Key Selected!";
+
 }
 
 function shiftLeft() {
-
-    if (!gameStarted) return;
 
     if (
         insertionKey > 0 &&
@@ -598,6 +711,7 @@ function shiftLeft() {
         insertionKey--;
 
         swaps++;
+
         comparisons++;
 
         renderArray();
@@ -605,12 +719,16 @@ function shiftLeft() {
         updateStats();
 
         highlightBars();
+
+        document.getElementById('robot-text')
+            .innerHTML =
+            "🤖 Shifted Left!";
+
     }
+
 }
 
 function insertKey() {
-
-    if (!gameStarted) return;
 
     currentIndex++;
 
@@ -622,20 +740,26 @@ function insertKey() {
         checkWin();
 
         return;
+
     }
 
-    insertionKey = currentIndex + 1;
+    insertionKey =
+        currentIndex + 1;
 
     highlightBars();
+
 }
 
-/* ---------------------- */
-/* LOAD */
-/* ---------------------- */
+/* =========================
+   LOAD
+========================= */
 
 window.onload = () => {
 
     generateArray();
 
     updateControls();
+
+    enableControls();
+
 };
