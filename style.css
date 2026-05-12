@@ -9,57 +9,74 @@
 }
 
 body {
+
     margin: 0;
+
     font-family: Arial, sans-serif;
+
     background: var(--bg-color);
+
     color: white;
 
     overflow-x: hidden;
+
     overflow-y: auto;
 }
 
 .game-container {
+
     display: flex;
+
     width: 100vw;
+
     min-height: 100vh;
 }
 
 .sidebar {
+
     width: 320px;
-    min-width: 280px;
-    max-width: 350px;
 
     background: var(--card-bg);
 
     padding: 20px;
 
     display: flex;
+
     flex-direction: column;
 
     gap: 15px;
 }
 
 .game-title {
+
     text-align: center;
+
     color: var(--accent-blue);
 }
 
 .game-title span {
+
     color: var(--accent-pink);
 }
 
 .control-group h3 {
+
     font-size: 12px;
+
     color: #8fa0dd;
 }
 
 .btn-grid {
+
     display: grid;
+
     grid-template-columns: repeat(2, 1fr);
+
     gap: 10px;
 }
 
 button {
+
     padding: 10px;
 
     border-radius: 8px;
@@ -78,42 +95,57 @@ button {
 }
 
 button:hover {
+
     background: #25316f;
 }
 
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
 button.active {
+
     background: var(--accent-blue);
+
     color: black;
 }
 
+button:disabled {
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
 .stats-panel {
+
     background: #0d1127;
+
     padding: 15px;
+
     border-radius: 10px;
 }
 
 #start-btn {
+
     background: orange;
+
     color: black;
+
     font-size: 18px;
 }
 
 #reset-btn {
+
     background: var(--accent-pink);
 }
 
 .visualizer-container {
+
     flex: 1;
 
     display: flex;
+
     flex-direction: column;
 
     justify-content: center;
+
     align-items: center;
 
     position: relative;
@@ -122,6 +154,7 @@ button.active {
 }
 
 .robot-helper {
+
     position: absolute;
 
     top: 10px;
@@ -154,9 +187,13 @@ button.active {
     height: 65vh;
 
     min-height: 400px;
+
+    overflow: visible !important;
 }
 
 .bar {
+
+    position: relative;
 
     min-width: 40px;
 
@@ -182,41 +219,47 @@ button.active {
 
     font-weight: bold;
 
+    color: white;
+
     transition:
         height 0.3s ease,
         transform 0.2s ease,
         background 0.2s ease;
-
-    color: white;
-
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
 .bar:hover {
+
     transform: translateY(-5px);
 }
 
 .bar.active {
+
     background: var(--accent-yellow);
+
+    color: black;
 }
 
 .bar.compare {
+
     background: var(--accent-blue);
+
+    color: black;
 }
 
 .bar.minimum {
-    background: var(--accent-pink);
+
+    background: orange;
 }
 
 .bar.sorted {
-    background: var(--accent-green);
-}
 
-.speed-control {
-    margin-top: 20px;
+    background: var(--accent-green);
+
+    color: black;
 }
 
 .interactive-controls {
+
     margin-top: 20px;
 }
 
@@ -229,16 +272,17 @@ button.active {
     justify-content: center;
 
     flex-wrap: wrap;
-
-    max-width: 90%;
 }
 
 .game-buttons button {
+
     background: #16213e;
+
     border: 2px solid var(--accent-blue);
 }
 
 .hidden {
+
     display: none;
 }
 
@@ -247,35 +291,18 @@ button.active {
     .game-container {
 
         flex-direction: column;
-
-        overflow-y: auto;
-
     }
 
     .sidebar {
 
         width: 100%;
-
-        max-width: 100%;
-
-        min-width: 100%;
-
-    }
-
-    .visualizer-container {
-
-        padding: 20px;
-
     }
 
     #array-container {
 
-        gap: 5px;
-
         width: 100%;
 
-        overflow-x: auto;
-
+        gap: 5px;
     }
 
     .bar {
@@ -283,7 +310,6 @@ button.active {
         min-width: 30px;
 
         font-size: 12px;
-
     }
 
 }
