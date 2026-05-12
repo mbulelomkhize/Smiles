@@ -23,12 +23,17 @@ let countdown = 120;
 
 let gameStarted = false;
 
+/* ---------------------- */
+/* GENERATE ARRAY */
+/* ---------------------- */
+
 function generateArray(type = 'random') {
 
     currentArray = [];
     currentLabels = [];
 
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    const letters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
     if (type === 'random') {
 
@@ -63,9 +68,12 @@ function generateArray(type = 'random') {
 
         currentArray.forEach(val => {
 
-            let index = sorted.indexOf(val);
+            let index =
+                sorted.indexOf(val);
 
-            currentLabels.push(letters[index]);
+            currentLabels.push(
+                letters[index]
+            );
 
         });
 
@@ -83,6 +91,10 @@ function generateArray(type = 'random') {
     updateStats();
     highlightBars();
 }
+
+/* ---------------------- */
+/* RENDER */
+/* ---------------------- */
 
 function renderArray() {
 
@@ -103,51 +115,29 @@ function renderArray() {
 
         bar.innerText =
             listType === 'numerical'
-                ? currentArray[i]
-                : currentLabels[i];
-
-        if (isSortedIndex(i)) {
-            bar.classList.add('sorted');
-        }
+            ? currentArray[i]
+            : currentLabels[i];
 
         container.appendChild(bar);
     }
 }
 
-function isSortedIndex(index) {
-
-    for (let i = 0; i < index; i++) {
-
-        if (currentArray[i] > currentArray[i + 1]) {
-            return false;
-        }
-
-    }
-
-    return true;
-}
-
-function isArraySorted() {
-
-    for (let i = 0; i < currentArray.length - 1; i++) {
-
-        if (currentArray[i] > currentArray[i + 1]) {
-            return false;
-        }
-
-    }
-
-    return true;
-}
+/* ---------------------- */
+/* STATS */
+/* ---------------------- */
 
 function updateStats() {
 
-    document.getElementById('comparisons').innerText =
-        comparisons;
+    document.getElementById('comparisons')
+        .innerText = comparisons;
 
-    document.getElementById('swaps').innerText =
-        swaps;
+    document.getElementById('swaps')
+        .innerText = swaps;
 }
+
+/* ---------------------- */
+/* RESET */
+/* ---------------------- */
 
 function resetGame() {
 
@@ -158,56 +148,70 @@ function resetGame() {
     timer = 0;
     countdown = 120;
 
-    document.getElementById('timer').innerText =
-        "00:00";
+    document.getElementById('timer')
+        .innerText = "00:00";
 
-    document.getElementById('start-btn').disabled = false;
+    document.getElementById('start-btn')
+        .disabled = false;
 
-    generateArray('random');
+    generateArray();
 
-    disableControls();
-
-    document.getElementById('robot-text').innerHTML =
-        "🤖 Game reset!";
+    document.getElementById('robot-text')
+        .innerHTML = "🤖 Game reset!";
 }
 
-function setAlgorithm(algo, event) {
+/* ---------------------- */
+/* BUTTON HIGHLIGHT */
+/* ---------------------- */
+
+function highlight(group, button) {
+
+    const buttons =
+        document.querySelectorAll(
+            `[id^="${group}-"]`
+        );
+
+    buttons.forEach(btn =>
+        btn.classList.remove('active')
+    );
+
+    button.classList.add('active');
+}
+
+/* ---------------------- */
+/* SETTERS */
+/* ---------------------- */
+
+function setAlgorithm(algo, button) {
 
     algorithm = algo;
 
-    highlight('algo', event.target);
+    highlight('algo', button);
 
     updateControls();
 
     resetGame();
 }
 
-function setMode(m, event) {
+function setMode(m, button) {
 
     mode = m;
 
-    highlight('mode', event.target);
+    highlight('mode', button);
 }
 
-function setListType(type, event) {
+function setListType(type, button) {
 
     listType = type;
 
-    highlight('type', event.target);
+    highlight('type', button);
 
     generateArray();
 }
 
-function highlight(group, target) {
-
-    const buttons =
-        document.querySelectorAll(`[id^="${group}-"]`);
-
-    buttons.forEach(btn =>
-        btn.classList.remove('active'));
-
-    target.classList.add('active');
-}
+/* ---------------------- */
+/* CONTROLS */
+/* ---------------------- */
 
 function updateControls() {
 
@@ -224,14 +228,12 @@ function updateControls() {
 
         document.getElementById('bubble-controls')
             .classList.remove('hidden');
-
     }
 
     else if (algorithm === 'selection') {
 
         document.getElementById('selection-controls')
             .classList.remove('hidden');
-
     }
 
     else {
@@ -240,6 +242,10 @@ function updateControls() {
             .classList.remove('hidden');
     }
 }
+
+/* ---------------------- */
+/* HIGHLIGHT BARS */
+/* ---------------------- */
 
 function highlightBars() {
 
@@ -256,21 +262,30 @@ function highlightBars() {
     }
 
     if (bars[currentIndex]) {
+
         bars[currentIndex]
             .classList.add('active');
     }
 
     if (bars[currentIndex + 1]) {
+
         bars[currentIndex + 1]
             .classList.add('compare');
     }
 
-    if (algorithm === 'selection' && bars[selectedMin]) {
+    if (algorithm === 'selection') {
 
-        bars[selectedMin]
-            .classList.add('minimum');
+        if (bars[selectedMin]) {
+
+            bars[selectedMin]
+                .classList.add('minimum');
+        }
     }
 }
+
+/* ---------------------- */
+/* START */
+/* ---------------------- */
 
 function startSorting() {
 
@@ -278,9 +293,8 @@ function startSorting() {
 
     gameStarted = true;
 
-    document.getElementById('start-btn').disabled = true;
-
-    enableControls();
+    document.getElementById('start-btn')
+        .disabled = true;
 
     startTimer();
 
@@ -295,6 +309,10 @@ function startSorting() {
     highlightBars();
 }
 
+/* ---------------------- */
+/* TIMER */
+/* ---------------------- */
+
 function startTimer() {
 
     stopTimer();
@@ -307,15 +325,15 @@ function startTimer() {
 
             let mins =
                 String(Math.floor(timer / 60))
-                    .padStart(2, '0');
+                .padStart(2, '0');
 
             let secs =
                 String(timer % 60)
-                    .padStart(2, '0');
+                .padStart(2, '0');
 
-            document.getElementById('timer').innerText =
+            document.getElementById('timer')
+                .innerText =
                 `${mins}:${secs}`;
-
         }
 
         else {
@@ -324,20 +342,19 @@ function startTimer() {
 
             let mins =
                 String(Math.floor(countdown / 60))
-                    .padStart(2, '0');
+                .padStart(2, '0');
 
             let secs =
                 String(countdown % 60)
-                    .padStart(2, '0');
+                .padStart(2, '0');
 
-            document.getElementById('timer').innerText =
+            document.getElementById('timer')
+                .innerText =
                 `${mins}:${secs}`;
 
             if (countdown <= 0) {
 
                 stopTimer();
-
-                disableControls();
 
                 alert("⏰ Time Over!");
             }
@@ -351,19 +368,34 @@ function stopTimer() {
     clearInterval(interval);
 }
 
+/* ---------------------- */
+/* WIN */
+/* ---------------------- */
+
+function isArraySorted() {
+
+    for (let i = 0; i < currentArray.length - 1; i++) {
+
+        if (currentArray[i] >
+            currentArray[i + 1]) {
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function checkWin() {
 
     if (isArraySorted()) {
 
         stopTimer();
 
-        disableControls();
-
         gameStarted = false;
 
-        document.getElementById('start-btn').disabled = false;
-
-        renderArray();
+        document.getElementById('start-btn')
+            .disabled = false;
 
         alert("🎉 YOU WIN!");
 
@@ -373,29 +405,24 @@ function checkWin() {
     return false;
 }
 
-function disableControls() {
+/* ---------------------- */
+/* SWAP */
+/* ---------------------- */
 
-    const buttons =
-        document.querySelectorAll('.game-buttons button');
+function swap(i, j) {
 
-    buttons.forEach(btn => {
+    let temp =
+        currentArray[i];
 
-        btn.disabled = true;
+    currentArray[i] =
+        currentArray[j];
 
-    });
+    currentArray[j] = temp;
 }
 
-function enableControls() {
-
-    const buttons =
-        document.querySelectorAll('.game-buttons button');
-
-    buttons.forEach(btn => {
-
-        btn.disabled = false;
-
-    });
-}
+/* ---------------------- */
+/* BUBBLE SORT */
+/* ---------------------- */
 
 function movePointerLeft() {
 
@@ -425,8 +452,11 @@ function compareBars(choice) {
 
     if (!gameStarted) return;
 
-    let a = currentArray[currentIndex];
-    let b = currentArray[currentIndex + 1];
+    let a =
+        currentArray[currentIndex];
+
+    let b =
+        currentArray[currentIndex + 1];
 
     let shouldSwap = a > b;
 
@@ -438,7 +468,10 @@ function compareBars(choice) {
 
         if (shouldSwap) {
 
-            swap(currentIndex, currentIndex + 1);
+            swap(
+                currentIndex,
+                currentIndex + 1
+            );
 
             swaps++;
 
@@ -453,6 +486,7 @@ function compareBars(choice) {
         if (!swappedInPass) {
 
             checkWin();
+
             return;
         }
 
@@ -465,6 +499,10 @@ function compareBars(choice) {
 
     highlightBars();
 }
+
+/* ---------------------- */
+/* SELECTION SORT */
+/* ---------------------- */
 
 function selectCurrent() {
 
@@ -479,7 +517,8 @@ function moveSelectionRight() {
 
     if (!gameStarted) return;
 
-    if (currentIndex < currentArray.length - 1) {
+    if (currentIndex <
+        currentArray.length - 1) {
 
         currentIndex++;
 
@@ -511,9 +550,11 @@ function placeMinimum() {
 
     selectionStart++;
 
-    if (selectionStart >= currentArray.length - 1) {
+    if (selectionStart >=
+        currentArray.length - 1) {
 
         checkWin();
+
         return;
     }
 
@@ -525,6 +566,10 @@ function placeMinimum() {
 
     highlightBars();
 }
+
+/* ---------------------- */
+/* INSERTION SORT */
+/* ---------------------- */
 
 function pickKey() {
 
@@ -545,8 +590,10 @@ function shiftLeft() {
         currentArray[insertionKey - 1]
     ) {
 
-        swap(insertionKey,
-            insertionKey - 1);
+        swap(
+            insertionKey,
+            insertionKey - 1
+        );
 
         insertionKey--;
 
@@ -567,9 +614,13 @@ function insertKey() {
 
     currentIndex++;
 
-    if (currentIndex >= currentArray.length - 1) {
+    if (
+        currentIndex >=
+        currentArray.length - 1
+    ) {
 
         checkWin();
+
         return;
     }
 
@@ -578,25 +629,13 @@ function insertKey() {
     highlightBars();
 }
 
-function swap(i, j) {
+/* ---------------------- */
+/* LOAD */
+/* ---------------------- */
 
-    let temp = currentArray[i];
+window.onload = () => {
 
-    currentArray[i] =
-        currentArray[j];
+    generateArray();
 
-    currentArray[j] = temp;
-
-    let tempLabel =
-        currentLabels[i];
-
-    currentLabels[i] =
-        currentLabels[j];
-
-    currentLabels[j] =
-        tempLabel;
-}
-
-generateArray();
-
-disableControls();
+    updateControls();
+};
